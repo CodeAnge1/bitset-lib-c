@@ -16,14 +16,14 @@ typedef struct {
 } BitSet;
 
 /* Функции работы с множеством */
-BitSet bitsetCreate(size_t univesumSize);
 void bitsetAdd(BitSet* set, int element);
 void bitsetRemove(BitSet* set, int element);
-bool bitsetContains(BitSet* set, int element);
 void bitsetDestroy(BitSet* set);
+bool bitsetContains(BitSet* set, int element);
 bool setsIsEqual(BitSet* setA, BitSet* setB);
 bool setIsSubset(BitSet* setA, BitSet* setB);
 bool setIsStrictSubset(BitSet* setA, BitSet* setB);
+BitSet bitsetCreate(size_t univesumSize);
 BitSet getSetsUnion(BitSet* setA, BitSet* setB);
 BitSet getSetsIntersection(BitSet* setA, BitSet* setB);
 BitSet getSetsDifference(BitSet* setA, BitSet* setB);
