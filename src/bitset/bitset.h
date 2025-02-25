@@ -13,15 +13,15 @@ typedef struct {
     size_t blockCount; // Количество элементов динамического массива bits
     size_t size; // Количество блоков
     size_t capacity; // Максимальное число элементов в множестве
-    size_t universumSize; // Размер универсума для данного множества
 } BitSet;
 
-// Функции работы с множеством
+/* Функции работы с множеством */
 BitSet bitsetCreate(size_t univesumSize);
 void bitsetAdd(BitSet* set, int element);
 void bitsetRemove(BitSet* set, int element);
 bool bitsetContains(BitSet* set, int element);
 void bitsetDestroy(BitSet* set);
+bool setsIsEqual(BitSet* setA, BitSet* setB);
 bool setIsSubset(BitSet* setA, BitSet* setB);
 bool setIsStrictSubset(BitSet* setA, BitSet* setB);
 BitSet getSetsUnion(BitSet* setA, BitSet* setB);
