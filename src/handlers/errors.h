@@ -7,6 +7,5 @@
 
 int memoryIsAllocated(uint64_t* arr);
 int elementCanBeCreated(int element, int capacity);
-int universumIsNotLessThanSet(int setSize, int universumSize);
 
 #endif

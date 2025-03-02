@@ -17,15 +17,16 @@ typedef struct {
 } BitSet;
 
 /* Функции работы с множеством */
-void   bitsetAdd(BitSet* set, int element);
-void   bitsetAddMany(BitSet* set, int* array, int elementsCount);
-void   bitsetRemove(BitSet* set, int element);
-void   bitsetDestroy(BitSet* set);
-bool   bitsetContains(BitSet* set, int element);
-bool   setsIsEqual(BitSet* setA, BitSet* setB);
-bool   setIsSubset(BitSet* setA, BitSet* setB);
-bool   setIsStrictSubset(BitSet* setA, BitSet* setB);
 BitSet bitsetCreate(size_t capacity);
+void bitsetAdd(BitSet* set, int element);
+void bitsetAddMany(BitSet* set, int* array, int elementsCount);
+void bitsetRemove(BitSet* set, int element);
+bool bitsetContains(BitSet* set, int element);
+void bitsetDestroy(BitSet* set);
+size_t findSetSize(BitSet* set);
+bool setsIsEqual(BitSet* setA, BitSet* setB);
+bool setIsSubset(BitSet* setA, BitSet* setB);
+bool setIsStrictSubset(BitSet* setA, BitSet* setB);
 BitSet getSetsUnion(BitSet* setA, BitSet* setB);
 BitSet getSetsIntersection(BitSet* setA, BitSet* setB);
 BitSet getSetsDifference(BitSet* setA, BitSet* setB);
