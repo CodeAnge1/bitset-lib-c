@@ -7,7 +7,7 @@ BitSet bitsetCreate(size_t capacity) {
     size_t blockCount = (capacity + 63) / 64;
 
     BitSet set;
-    set.bits = (uint64_t*)calloc(blockCount, sizeof(int64_t));
+    set.bits = (uint64_t*)calloc(blockCount, sizeof(uint64_t));
 
     if (memoryIsAllocated(set.bits) == 0) {
         set.blockCount = blockCount;
@@ -27,7 +27,7 @@ void bitsetAdd(BitSet* set, int element) {
         ) {
         int arrayBlock = element / 64;
         int elementBit = element % 64;
-        set->bits[arrayBlock] |= ((int64_t)1 << (64 - elementBit));
+        set->bits[arrayBlock] |= ((uint64_t)1 << (63 - elementBit));
         set->size += 1;
     }
 }
@@ -42,7 +42,7 @@ void bitsetRemove(BitSet* set, int element) {
     if (elementCanBeCreated(element, set->capacity) == 0) {
         int arrayBlock = element / 64;
         int elementBit = element % 64;
-        set->bits[arrayBlock] &= ~((int64_t)1 << elementBit);
+        set->bits[arrayBlock] &= ~((uint64_t)1 << elementBit);
         set->size -= 1;
     }
 }
@@ -55,7 +55,7 @@ bool bitsetContains(BitSet* set, int element) {
     } else {
         int arrayBlock = element / 64;
         int elementBit = element % 64;
-        isContains = (set->bits[arrayBlock] >> (64 - elementBit)) & 1;
+        isContains = (set->bits[arrayBlock] >> (63 - elementBit)) & 1;
     }
 
     return isContains;
@@ -184,7 +184,7 @@ BitSet getComplementSet(BitSet* setA) {
     }
 
     int excessBits = set.capacity % 64;
-    uint64_t mask = ~(((int64_t)1 << (64 - excessBits)) - 1);
+    uint64_t mask = ~(((uint64_t)1 << (64 - excessBits - 1)) - 1);
     set.bits[set.blockCount - 1] &= mask;
 
     return set;

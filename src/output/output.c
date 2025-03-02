@@ -6,7 +6,7 @@ void printSet(const char* setName, uint64_t* bits, int capacity) {
     printf("%s:\n", setName);
 
     for (int iter = 0; iter <= capacity; iter++) {
-        if (((bits[iter / 64]) >> (64 - iter)) & 1) {
+        if (((bits[iter / 64]) >> (63 - iter)) & 1) {
             printf("%d ", iter);
         }
     }
@@ -21,7 +21,7 @@ void printBitViewOfSet(const char* setName, uint64_t* bits, int blockCount) {
         if (iter == 64) {
             printf("\n");
         }
-        if (((bits[iter / 64]) >> (64 - iter)) & 1) {
+        if (((bits[iter / 64]) >> (63 - iter)) & 1) {
             printf("1");
         } else {
             printf("0");
