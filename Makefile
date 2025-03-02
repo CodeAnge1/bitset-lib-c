@@ -10,9 +10,9 @@ OBJ = src/main.o src/bitset/bitset.o src/output/output.o src/handlers/errors.o
 # Финальный исполняемый файл
 TARGET = bitsetMain
 
-# Компиляция исполняемого файла и очистка от мусора
+# Компиляция исполняемого файла
 $(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET) && make clean
+	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
 
 # Компиляция каждого .c в .o
 %.o: %.c
