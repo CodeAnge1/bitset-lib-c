@@ -1,4 +1,5 @@
 #include "bitset.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -21,11 +22,19 @@ BitSet bitsetCreate(size_t capacity) {
 }
 
 void bitsetAdd(BitSet* set, int element) {
-    if (elementCanBeCreated(element, set->capacity) == 0) {
+    if (elementCanBeCreated(element, set->capacity) == 0 &&
+        !bitsetContains(set, element)
+        ) {
         int arrayBlock = element / 64;
         int elementBit = element % 64;
-        set->bits[arrayBlock] |= ((int64_t)1 << elementBit);
+        set->bits[arrayBlock] |= ((int64_t)1 << (64 - elementBit));
         set->size += 1;
+    }
+}
+
+void bitsetAddMany(BitSet* set, int* array, int elementsCount) {
+    for (int iter = 0; iter < elementsCount; iter++) {
+        bitsetAdd(set, array[iter]);
     }
 }
 
@@ -40,13 +49,13 @@ void bitsetRemove(BitSet* set, int element) {
 
 bool bitsetContains(BitSet* set, int element) {
     bool isContains = true;
-    
-    if (element < 0 || set->capacity <= (size_t)element) {
+
+    if (element < 0 || set->capacity < (size_t)element) {
         isContains = false;
     } else {
         int arrayBlock = element / 64;
         int elementBit = element % 64;
-        isContains = (set->bits[arrayBlock] >> elementBit) & 1;
+        isContains = (set->bits[arrayBlock] >> (64 - elementBit)) & 1;
     }
 
     return isContains;
@@ -60,24 +69,28 @@ void bitsetDestroy(BitSet* set) {
     set->size = 0;
 }
 
+size_t findSetSize(BitSet* set) {
+    size_t counter = 0;
+    for (size_t block = 0; block < set->blockCount; block++) {
+        for (int8_t iter = 0; iter < 64; iter++) {
+            int8_t bit = ((set->bits[block] >> (64 - iter)) & 1);
+            counter += (size_t)bit;
+        }
+    }
+    
+    return counter;
+}
+
 bool setsIsEqual(BitSet* setA, BitSet* setB) {
     bool isEqual = (setA->size == setB->size);
 
     bool setAIsSmaller = setA->blockCount < setB->blockCount;
-    size_t smallerBlockCount = setAIsSmaller ? setA->blockCount : setB->blockCount;
-    size_t biggerBlockCount = setAIsSmaller ? setB->blockCount : setA->blockCount;
+    
+    size_t smallerBlockCount =
+        setAIsSmaller ? setA->blockCount : setB->blockCount;
 
     for (size_t block = 0; block < smallerBlockCount && isEqual; block++) {
         if (setA->bits[block] != setB->bits[block]) {
-            isEqual = false;
-        }
-    }
-
-    for (size_t block = smallerBlockCount; block < biggerBlockCount && isEqual; block++) {
-        if (
-            (setB->bits[block] != 0) && setAIsSmaller &&
-            (setA->bits[block] != 0) && !setAIsSmaller
-        ) {
             isEqual = false;
         }
     }
@@ -106,72 +119,73 @@ bool setIsStrictSubset(BitSet* setA, BitSet* setB) {
 }
 
 BitSet getSetsUnion(BitSet* setA, BitSet* setB) {
-    int maxSize = setB->size;
-    if (setA->size > setB->size) {
-        maxSize = setA->size;
+    int maxCapacity = setB->capacity;
+    if (setA->capacity > setB->capacity) {
+        maxCapacity = setA->capacity;
     }
 
-    BitSet setC = bitsetCreate(maxSize);
-    setC.size = maxSize;
+    BitSet setC = bitsetCreate(maxCapacity);
 
     for (size_t block = 0; block < setC.blockCount; block++) {
         setC.bits[block] = setA->bits[block] | setB->bits[block];
     }
+    setC.size = findSetSize(&setC);
 
     return setC;
 }
 
 BitSet getSetsIntersection(BitSet* setA, BitSet* setB) {
-    int maxSize = setB->size;
-    if (setA->size > setB->size) {
-        maxSize = setA->size;
+    int maxCapacity = setB->capacity;
+    if (setA->capacity > setB->capacity) {
+        maxCapacity = setA->capacity;
     }
 
-    BitSet setC = bitsetCreate(maxSize);
-    setC.size = maxSize;
+    BitSet setC = bitsetCreate(maxCapacity);
 
     for (size_t block = 0; block < setC.blockCount; block++) {
         setC.bits[block] = setA->bits[block] & setB->bits[block];
     }
+    setC.size = findSetSize(&setC);
 
     return setC;
 }
 
 BitSet getSetsDifference(BitSet* setA, BitSet* setB) {
-    BitSet setC = bitsetCreate(setA->size);
-    setC.size = setA->size;
+    BitSet setC = bitsetCreate(setA->capacity);
     for (size_t block = 0; block < setC.blockCount; block++) {
         setC.bits[block] = setA->bits[block] & (~setB->bits[block]);
     }
+    setC.size = findSetSize(&setC);
     return setC;
 }
 
 BitSet getSetsSymmetricDifference(BitSet* setA, BitSet* setB) {
-    int maxSize = setB->size;
-    if (setA->size > setB->size) {
-        maxSize = setA->size;
+    int maxCapacity = setB->capacity;
+    if (setA->capacity > setB->capacity) {
+        maxCapacity = setA->capacity;
     }
 
-    BitSet setC = bitsetCreate(maxSize);
-    setC.size = maxSize;
+    BitSet setC = bitsetCreate(maxCapacity);
 
     for (size_t block = 0; block < setC.blockCount; block++) {
         setC.bits[block] = setA->bits[block] ^ setB->bits[block];
     }
+    setC.size = findSetSize(&setC);
 
     return setC;
 }
 
 BitSet getComplementSet(BitSet* setA) {
     BitSet set = bitsetCreate(setA->capacity);
-    set.size = setA->size;
+    set.size = setA->capacity - setA->size;
 
     for (size_t block = 0; block < set.blockCount; block++) {
         set.bits[block] = ~setA->bits[block];
     }
 
     int excessBits = set.capacity % 64;
-    set.bits[set.blockCount - 1] &= (((int64_t)1 << (excessBits + 1)) - 1);
+    uint64_t mask = ~(((int64_t)1 << (64 - excessBits)) - 1);
+    set.bits[set.blockCount - 1] &= mask;
 
     return set;
 }

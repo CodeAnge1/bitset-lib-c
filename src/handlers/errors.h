@@ -1,8 +1,8 @@
 #ifndef ERRORS_H
 #define ERRORS_H
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 int memoryIsAllocated(uint64_t* arr);

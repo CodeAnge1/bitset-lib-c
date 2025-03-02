@@ -1,30 +1,29 @@
-# Компилятор:
+# Компилятор
 CC = gcc
 
-# Флаги компиляции:
+# Флаги компиляции
 CFLAGS = -Wall -Wextra -g -std=c11 -DDEBUG
 
-SOURCES = src/main.c src/bitset/bitset.c src/handlers/errors.c src/output/output.c
+# Объектные файлы
+OBJ = src/main.o src/bitset/bitset.o src/output/output.o src/handlers/errors.o
 
-# Объектные файлы:
-OBJ = $(SOURCES:.c=.o)
+# Финальный исполняемый файл
+TARGET = bitsetMain
 
-# Финальный исполняемый файл:
-TARGET = bitsetMain.o
-
-# Компиляция исполняемого файла:
+# Компиляция исполняемого файла и очистка от мусора
 $(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
+	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET) && make clean
 
-# Компиляция каждого .c в .o:
+# Компиляция каждого .c в .o
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Удаление лишних объектных файлов:
-clean: rm -f $(OBJ)
+clean:
+	rm -f $(OBJ)
 
-# Перекомпиляция:
-rebuild: clean $(TARGET)
+# Очистка файлов
+cleanf:
+	rm -f $(OBJ) $(TARGET)
 
-# Быстрая сборка:
-all: $(TARGET) clean
+# Перекомпиляция
+rebuild: cleanf $(TARGET)
