@@ -21,6 +21,7 @@ BitSet bitsetCreate(size_t capacity);
 void bitsetAdd(BitSet* set, int element);
 void bitsetAddMany(BitSet* set, int* array, int elementsCount);
 void bitsetRemove(BitSet* set, int element);
+void bitsetRemoveMany(BitSet* set, int* array, int elementsCount);
 bool bitsetContains(BitSet* set, int element);
 void bitsetDestroy(BitSet* set);
 size_t findSetSize(BitSet* set);

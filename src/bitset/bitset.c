@@ -39,11 +39,17 @@ void bitsetAddMany(BitSet* set, int* array, int elementsCount) {
 }
 
 void bitsetRemove(BitSet* set, int element) {
-    if (elementCanBeCreated(element, set->capacity) == 0) {
+    if (elementCanBeCreated(element, set->capacity) == 0 && bitsetContains(set, element)) {
         int arrayBlock = element / 64;
         int elementBit = element % 64;
-        set->bits[arrayBlock] &= ~((uint64_t)1 << elementBit);
+        set->bits[arrayBlock] &= ~((uint64_t)1 << (63 - elementBit));
         set->size -= 1;
+    }
+}
+
+void bitsetRemoveMany(BitSet* set, int* array, int elementsCount) {
+    for (int iter = 0; iter < elementsCount; iter++) {
+        bitsetRemove(set, array[iter]);
     }
 }
 
@@ -84,12 +90,7 @@ size_t findSetSize(BitSet* set) {
 bool setsIsEqual(BitSet* setA, BitSet* setB) {
     bool isEqual = (setA->size == setB->size);
 
-    bool setAIsSmaller = setA->blockCount < setB->blockCount;
-    
-    size_t smallerBlockCount =
-        setAIsSmaller ? setA->blockCount : setB->blockCount;
-
-    for (size_t block = 0; block < smallerBlockCount && isEqual; block++) {
+    for (size_t block = 0; block < setA->blockCount && isEqual; block++) {
         if (setA->bits[block] != setB->bits[block]) {
             isEqual = false;
         }
