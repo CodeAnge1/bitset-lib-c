@@ -105,9 +105,7 @@ bool setIsSubset(BitSet* setA, BitSet* setB) {
     for (size_t iter = 0; iter < setA->capacity && isSubset; iter++) {
         bool numberInA = setA->bits[iter / 64] >> (iter) & 1;
         bool numberInB = setB->bits[iter / 64] >> (iter) & 1;
-        if ((numberInA & numberInB) != numberInA) {
-            isSubset = false;
-        }
+        isSubset = (numberInA & numberInB) == numberInA;
     }
 
     return isSubset;

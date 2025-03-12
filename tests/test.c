@@ -65,6 +65,8 @@ void test_remove() {
         assert(workSet.size == 8 && "Неправильный размер множества");
         assert(!bitsetContains(&workSet, 0) && "Элемент не был удалён");
         assert(!bitsetContains(&workSet, 5) && "Элемент не был удалён");
+
+        bitsetDestroy(&workSet);
     }
 }
 
@@ -82,6 +84,9 @@ void test_subset() {
         bitsetAddMany(&biggerSet, values, 12);
         
         assert(setIsSubset(&smallerSet, &biggerSet) && "Ошибка, множество не является подмножеством");
+
+        bitsetDestroy(&smallerSet);
+        bitsetDestroy(&biggerSet);
     }
 
     {
@@ -95,6 +100,9 @@ void test_subset() {
         bitsetAddMany(&biggerSet, biggerValues, 7);
         
         assert(!setIsSubset(&smallerSet, &biggerSet) && "Ошибка, множество является подмножеством");
+        
+        bitsetDestroy(&smallerSet);
+        bitsetDestroy(&biggerSet);
     }
 }
 
@@ -112,6 +120,9 @@ void test_strict_subset() {
         bitsetAddMany(&biggerSet, values, 12);
         
         assert(!setIsStrictSubset(&smallerSet, &biggerSet) && "Ошибка, множество не является подмножеством");
+
+        bitsetDestroy(&smallerSet);
+        bitsetDestroy(&biggerSet);
     }
 
     {
@@ -125,6 +136,9 @@ void test_strict_subset() {
         bitsetAddMany(&biggerSet, biggerValues, 12);
 
         assert(setIsStrictSubset(&smallerSet, &biggerSet) && "Ошибка, множество не является подмножеством");
+
+        bitsetDestroy(&smallerSet);
+        bitsetDestroy(&biggerSet);
     }
 }
 
@@ -451,9 +465,9 @@ void test_complement() {
 }
 
 int main() {
+    test_memory_leak();
     test_boundary();
     test_performance();
-    test_memory_leak();
     test_remove();
     test_subset();
     test_strict_subset();

@@ -39,6 +39,21 @@ void example_op() {
 
     printSet("Result", _9.bits, _9.capacity);
     printf("Результат %sсовпадает с массивом Answer\n", setsIsEqual(&_9, &Answer) ? "" : "не ");
+
+    bitsetDestroy(&A);
+    bitsetDestroy(&B);
+    bitsetDestroy(&C);
+    bitsetDestroy(&D);
+    bitsetDestroy(&Answer);
+    bitsetDestroy(&_1);
+    bitsetDestroy(&_2);
+    bitsetDestroy(&_3);
+    bitsetDestroy(&_4);
+    bitsetDestroy(&_5);
+    bitsetDestroy(&_6);
+    bitsetDestroy(&_7);
+    bitsetDestroy(&_8);
+    bitsetDestroy(&_9);
 }
 
 int main() {
